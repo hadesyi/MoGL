@@ -6,36 +6,36 @@ var Matrix = cls('Matrix', null, function(){
 	this.scaleX = this.scaleY = this.scaleZ = 1;
 }, {
 	position:{
-		get(){
+		get:function(){
 			var p = this._mPos || (this._mPos = []);
 			p[0] = this.x, p[1] = this.y, p[2] = this.z;
 			return p;
 		},
-		set(v){
+		set:function(v){
 			if(v[0] !== undefined) this.x = v[0];
 			if(v[1] !== undefined) this.y = v[1];
 			if(v[2] !== undefined) this.z = v[2];
 		}
 	},
 	scale:{
-		get(){
+		get:function(){
 			var p = this._mScale || (this._mScale = []);
 			p[0] = this.scaleX, p[1] = this.scaleY, p[2] = this.scaleZ;
 			return p;
 		},
-		set(v){
+		set:function(v){
 			if(v[0] !== undefined) this.scaleX = v[0];
 			if(v[1] !== undefined) this.scaleY = v[1];
 			if(v[2] !== undefined) this.scaleZ = v[2];
 		}
 	},
 	rotate:{
-		get(){
+		get:function(){
 			var p = this._mRotate || (this._mRotate = []);
 			p[0] = this.rotateX, p[1] = this.rotateY, p[2] = this.rotateZ;
 			return p;
 		},
-		set(v){
+		set:function(v){
 			if(v[0] !== undefined) this.rotateX = v[0];
 			if(v[1] !== undefined) this.rotateY = v[1];
 			if(v[2] !== undefined) this.rotateZ = v[2];

@@ -70,7 +70,7 @@ var Geometry = cls('Geometry', null, (function(){
 	};
 })(), {
 	volume:{
-		get(){
+		get:function(){
 			var minX, minY, minZ, maxX, maxY, maxZ, t0, t1, t2, t, i;
 			if(!this._mVolume){
 				minX = minY = minZ = maxX = maxY = maxZ = 0,

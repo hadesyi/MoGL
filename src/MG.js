@@ -83,8 +83,8 @@ var MG = (function(){
 		var p = this._mProp || (this._mProp = {});
 		if(k in p) return;
 		Object.defineProperty(this, k, {
-			get(){return p[k];},
-			set(v){
+			get:function(){return p[k];},
+			set:function(v){
 				p[k] = v;
 				typeof listener == 'function' ? listener(k, v) : listener.listen(k, v);
 			}
@@ -96,8 +96,8 @@ var MG = (function(){
 			var p = shared[this._mClsId] || (shared[this._mClsId] = {});
 			p = p[k] || (p[k] = {});
 			Object.defineProperty(this, k, {
-				get(){return p[this._mId];},
-				set(v){p[this._mId] = v;}
+				get:function(){return p[this._mId];},
+				set:function(v){p[this._mId] = v;}
 			});
 			if(arguments.length == 2) p[this._mId] = arguments[1];
 		};
