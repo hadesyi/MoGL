@@ -5,6 +5,7 @@ var Geometry = cls('Geometry', null, (function(){
 		v1 = {x:0, y:0, z:0}, v2 = {x:0, y:0, z:0};
 		return function calcNormal(pos, idx){
 			var i, j, k, l;
+			this.super();
 			for(nm.length = i = 0, j = pos.length; i < j; i++) nm[i] = 0;
 			for(i = 0, j = idx.length; i < j; i += 3){
 				k = 3*idx[i + 1], l = 3*idx[i];

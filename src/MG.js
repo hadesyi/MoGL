@@ -28,12 +28,29 @@ var COS = function f(r){return r in f ? f[r] : (f[r] = Math.cos(r));};
 var TAN = function f(r){return r in f ? f[r] : (f[r] = Math.tan(r));};
 var SQRT = function f(r){return r in f ? f[r] : (f[r] = Math.sqrt(r));}; 
 var CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PID = PI * 2, D2R = PI / 180, R2D = 180 / PI;
-
+var COLOR = function(v){
+	var ret = [0, 0, 0, 1];
+	if(typeof v == 'string' && v.charAt(0) == '#'){
+		if(v.length == 4) v = '#'+v[1]+v[1]+v[2]+v[2]+v[3]+v[3];
+		ret[0] = parseInt(v.substr(1, 2), 16) / 255,
+		ret[1] = parseInt(v.substr(3, 2), 16) / 255,
+		ret[2] = parseInt(v.substr(5, 2), 16) / 255;
+		if(v.length > 7){
+			ret[3] = parseFloat(v.substr(7));
+			if(ret[3] > 1) ret[3] = 1;
+		}
+	}else if('r' in v) ret[0] = v.r, ret[1] = v.g, ret[2] = v.b, ret[3] = 'a' in v ? v.a : 1;
+	else ret[0] = v[0], ret[1] = v[1], ret[2] = v[2], ret[3] = '3' in v ? v[3] : 1;
+	return ret;
+};
 var MG = (function(){
 	var id = 1, MG = function(){
 		this._mId = id++;
 		this._mClsId = this.constructor._id;
 	}, fn = MG.prototype;
+	fn.toString = function(){
+		return this._mClsId + '_' + this._mId;
+	};
 	fn.listen = function(e){
 		const ev = this._mEv;
 		if(ev && ev.length) this.notify(e);

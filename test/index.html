@@ -21,7 +21,7 @@ var Child = MG.cls('Child', Parent, function(a, b){
 	this.super(a);
 	console.log('child', b);
 	this.observable('b', function(k, v){
-		console.log(k,v);
+		console.log('observable', k, v);
 	});
 }, {
 	action:function(a, b){

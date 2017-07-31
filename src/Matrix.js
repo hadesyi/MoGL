@@ -1,4 +1,5 @@
 var Matrix = cls('Matrix', null, function(){
+	this.super();
 	this.shared('mat', new Float32Array(16));
 	this.matIdentity();
 	this.x = this.y = this.z = this.rotateX = this.rotateY = this.rotateZ = 0,
