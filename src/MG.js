@@ -1,8 +1,9 @@
 var cls = function(name, p, c, proto){
-	var f, pfn, fn, psup;
+	var f, pfn, fn, psup, id = 2;
 	if(typeof p == 'string') p = cls.classes[p];
 	p = p || MG, pfn = p.prototype, psup = pfn.super;
 	cls.classes[name] = f = function(){c.apply(this, arguments);}, fn = f.prototype = Object.create(pfn);
+	f._mId = id++;
 	Object.keys(proto).forEach(function(k){
 		var f = proto[k];
 		if(typeof f == 'function') fn[k] = f;
@@ -30,7 +31,8 @@ var CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PID = PI * 2
 
 var MG = (function(){
 	var id = 1, MG = function(){
-		this._id = id++;
+		this._mId = id++;
+		this._mClsId = this.constructor._id;
 	}, fn = MG.prototype;
 	fn.listen = function(e){
 		const ev = this._mEv;
@@ -74,15 +76,16 @@ var MG = (function(){
 	(function(fn){
 		var shared = {};
 		fn.shared = function(k){
-			var p = shared[k] || (shared[k] = {});
+			var p = shared[this._mClsId] || (shared[this._mClsId] = {});
+			p = p[k] || (p[k] = {});
 			Object.defineProperty(this, k, {
-				get(){return p[this._id];},
-				set(v){p[this._id] = v;}
+				get(){return p[this._mId];},
+				set(v){p[this._mId] = v;}
 			});
-			if(arguments.length == 2) p[this._id] = arguments[1];
+			if(arguments.length == 2) p[this._mId] = arguments[1];
 		};
 	})(fn);
-	Object.defineProperty(MG, 'shared', {get:function(k){return shared[k];}});
+	Object.defineProperty(MG, 'shared', {get:function(cls, k){return shared[cls._mId][k];}});
 	Object.defineProperty(MG, 'cls', {value:cls});
 	Object.freeze(fn);
 	Object.freeze(MG);
