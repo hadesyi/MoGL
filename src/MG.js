@@ -209,7 +209,7 @@ var MG = (function(){
 		}
 		temp = code.varyings, i = temp.length;
 		while(i--) str += 'varying ' + temp[i] + ';\n';
-		resultObject.shaderStr = str + VertexShader.baseFunction + 'void main(void){\n' + code.main + ';\n}';
+		resultObject.shaderStr = str + Shader.vFunction + 'void main(void){\n' + code.main.join('\n') + '}';
 		return resultObject;
 	};
 	MG.fragmentShaderParser = function(source){
@@ -224,7 +224,7 @@ var MG = (function(){
 		}
 		temp = code.varyings, i = temp.length;
 		while(i--) str += 'varying ' + temp[i] + ';\n';
-		resultObject.shaderStr = str + 'void main(void){\n' + code.main + ';\n}';
+		resultObject.shaderStr = str + 'void main(void){\n' + code.main.join('\n') + '}';
 		return resultObject;
 	};
 	return Object.freeze(MG);
