@@ -1,21 +1,19 @@
-var Material = cls('Material', null, (function(){
-	return function(){
-		var a = arguments, i = a.length;
-		this.super();
-		this.shared('lineWidth', 1);
-		this.shared('_mColor', COLOR(i ? i == 1 ? a[0] : a : '#fff'));
-		this.shared('_mWColor', [Math.random(), Math.random(), Math.random(), 1]);
-		this.shared('type', Material.TRIANGLES);
-		this.shared('wireFrame', false);
-		this.shared('lambert', 1);
-		this.shared('shading', Shading.none);
-		this.shared('diffuse', []);
-		this.shared('diffuseWrap', []);
-		this.shared('normal', []);
-		this.shared('specular', []);
-		this.shared('specularNormal', []);
-	};
-})(),{
+var Material = cls('Material', null, function(){
+	var a = arguments, i = a.length;
+	this.super();
+	this.lineWidth = 1;
+	this._mColor = COLOR(i ? i == 1 ? a[0] : a : '#fff');
+	this._mWColor = [Math.random(), Math.random(), Math.random(), 1];
+	this.type = Material.TRIANGLES;
+	this.wireFrame = false;
+	this.lambert = 1;
+	this.shader = Shader.color;
+	this.diffuse = [];
+	this.diffuseWrap = [];
+	this.normal = [];
+	this.specular = [];
+	this.specularNormal = [];
+}, {
 	textureCount:{
 		get:function(){return this.diffuse.length + this.diffuseWrap.length + 
 			this.normal.length + this.specular.length + this.specularNormal.length;

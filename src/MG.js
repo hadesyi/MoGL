@@ -21,6 +21,7 @@ var cls = function(name, p, c, proto){
 	return f;
 };
 cls.classes = {};
+var PIXEL_RATIO = window.devicePixelRatio;
 var GLMAT_EPSILON = 0.000001;
 var ATAN = Math.atan, ATAN2 = Math.atan2, ASIN = Math.asin;
 var SIN = function f(r){return r in f ? f[r] : (f[r] = Math.sin(r));};
@@ -105,66 +106,8 @@ var MG = (function(){
 	Object.freeze(fn);
 	Object.defineProperty(MG, 'shared', {get:function(cls, k){return shared[cls._mId][k];}});
 	MG.cls = cls;
-	'vbo,vcbo,vnbo,uvbo,ibo'.split(',').forEach(function(k1){
-		var k2 = k1.toUpperCase();
-		MG['make' + k2] = function(gpu, geo, data, stribe){
-			var gl = gpu.gl, buffer = gpu[k1][geo];
-			if(buffer) return;
-			if(Array.isArray(data)) data = new Float32Array(data);
-
-			var buffer = gl.createBuffer();
-			gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-			gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-			buffer.data = data;
-			buffer.stride = stribe;
-			buffer.numItem = data.length / stribe;
-			gl.bindBuffer(gl.ARRAY_BUFFER, null);
-			buffer.name = geo;
-			buffer.type = k2;
-			gpu[k1][geo] = buffer;
-		};
-	});
-	MG.makeProgram = function(gpu, name, vSource, fSource){
-		var gl = gpu.gl, vShader, fShader, program, i, len, tList;
-		vShader = gl.createShader(gl.VERTEX_SHADER), fShader = gl.createShader(gl.FRAGMENT_SHADER);
-		gl.shaderSource(vShader, vSource.shaderStr), gl.compileShader(vShader);
-		gl.shaderSource(fShader, fSource.shaderStr), gl.compileShader(fShader);
-
-		program = gl.createProgram();
-		gl.attachShader(program, vShader), gl.attachShader(program, fShader);
-		gl.linkProgram(program);
-		vShader.name = vSource.id, fShader.name = fSource.id, program.name = name;
-		if(!gl.getProgramParameter(program, gl.LINK_STATUS)) throw 'fail to initialize program';
-		gl.useProgram(program);
-
-		tList = vSource.attributes;
-		for(i = 0, len = tList.length; i < len; i++){
-			gl.bindBuffer(gl.ARRAY_BUFFER, gpu.vbo['null']),
-			gl.enableVertexAttribArray(program[tList[i]] = gl.getAttribLocation(program, tList[i])),
-			gl.vertexAttribPointer(program[tList[i]], gpu.vbo['null'].stride, gl.FLOAT, false, 0, 0),
-			gl.bindBuffer(gl.ARRAY_BUFFER, null);
-		}
-
-		tList = vSource.uniforms, i = tList.length;
-		while(i--) program[tList[i]] = gl.getUniformLocation(program, tList[i]);
-
-		tList = fSource.uniforms, i = tList.length;
-		while (i--) program[tList[i]] = gl.getUniformLocation(program, tList[i]);
-		gpu.programs[name] = program;
-	};
-	MG.makeTexture = function(gpu, texture){
-		var gl = gpu.gl, glTexture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_2D, glTexture);
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-		gl.generateMipmap(gl.TEXTURE_2D);
-		glTexture.textrue = texture;
-		gpu.textures[texture] = glTexture;
-		gl.bindTexture(gl.TEXTURE_2D, null);
-	};
+	
+	
 	MG.makeFrameBuffer = function(gpu, camera, cvs){
 		var gl = gpu.gl, texture, fBuffer, rBuffer, tArea, cvsW, cvsH, pRatio;
 		if(!cvs) return;
@@ -192,40 +135,6 @@ var MG = (function(){
 		gl.bindRenderbuffer(gl.RENDERBUFFER, null);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		gpu.framebuffers[camera] = {frameBuffer:fBuffer, texture:texture};
-	};
-	MG.vertexShaderParser = function(source){
-		var i, temp, str, resultObject, code;
-		code = source.code;
-		resultObject = {id:code.id, shaderStr: null, uniforms: [], attributes: []};
-		str = "", temp = code.attributes, i = temp.length;
-		while(i--){
-			str += 'attribute ' + temp[i] + ';\n',
-			resultObject.attributes.push(temp[i].split(' ')[1]);
-		}
-		temp = code.uniforms, i = temp.length;
-		while(i--){
-			str += 'uniform ' + temp[i] + ';\n',
-			resultObject.uniforms.push(temp[i].split(' ')[1]);
-		}
-		temp = code.varyings, i = temp.length;
-		while(i--) str += 'varying ' + temp[i] + ';\n';
-		resultObject.shaderStr = str + Shader.vFunction + 'void main(void){\n' + code.main.join('\n') + '}';
-		return resultObject;
-	};
-	MG.fragmentShaderParser = function(source){
-		var i, temp, str, resultObject, code;
-		code = source.code;
-		resultObject = {id:code.id, shaderStr:null, uniforms:[]};
-		str = 'precision ' + (code.precision ? code.precision : mediump float) + ';\n';
-		temp = code.uniforms, i = temp.length;
-		while(i--){
-			str += 'uniform ' + temp[i] + ';\n',
-			resultObject.uniforms.push(temp[i].split(' ')[1]);
-		}
-		temp = code.varyings, i = temp.length;
-		while(i--) str += 'varying ' + temp[i] + ';\n';
-		resultObject.shaderStr = str + 'void main(void){\n' + code.main.join('\n') + '}';
-		return resultObject;
 	};
 	return Object.freeze(MG);
 })();
