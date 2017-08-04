@@ -20,11 +20,11 @@ var Material = cls('Material', null, function(){
 		}
 	},
 	color:{
-		get:function(){return this._mColor;}
+		get:function(){return this._mColor;},
 		set:function(v){this._mColor = COLOR(v);}
 	},
 	wireFrameColor:{
-		get:function(){return this._mWColor;}
+		get:function(){return this._mWColor;},
 		set:function(v){this._mWColor = COLOR(v);}
 	},
 	addTexture:function(type, tex/*,index,blendMode*/){
@@ -35,7 +35,7 @@ var Material = cls('Material', null, function(){
 		if(tex.toString() in texs[tex]) throw 'exist texture:' + type + ':' + tex;
 		texs[tex] = tex;
 		texture = {tex:tex, blendMode:arguments[3] || ''};
-		if(typeof i == 'number') texs.splice(i, 0, texture);
+		if(typeof i === 'number') texs.splice(i, 0, texture);
 		else texs.push(texture);
 		return this;
 	},

@@ -187,7 +187,7 @@ var Matrix = cls('Matrix', null, function(){
 		aspect = fov*aspect,
 		this.frustum(-aspect, aspect, -fov, fov, near, far);
 		return this;
-    },
+		},
 	matLookAt:function(eye, center, up){
 		var a = this.mat;
 		var x0, x1, x2, y0, y1, y2, z0, z1, z2, len;
@@ -211,7 +211,7 @@ var Matrix = cls('Matrix', null, function(){
 		a[12] = -(x0*eyex + x1*eyey + x2*eyez), a[13] = -(y0*eyex + y1*eyey + y2*eyez);
 		a[14] = -(z0*eyex + z1*eyey + z2*eyez), a[15] = 1;
 		return this;
-    },
+		},
 	matStr:function(){
 		return 'Matrix(' + this.mat.join(', ') + ')';
 	}

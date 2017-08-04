@@ -1,5 +1,5 @@
 var Geometry = cls('Geometry', null, (function(){
- 	var pos = [], nm = [], tUV = [], tCo = [];
+	var pos = [], nm = [], tUV = [], tCo = [];
 	var calcNormal = (function(){
 		var v1, v2;
 		v1 = {x:0, y:0, z:0}, v2 = {x:0, y:0, z:0};
@@ -30,7 +30,7 @@ var Geometry = cls('Geometry', null, (function(){
 			}
 		};
 	})();
-	var infoCheck = function(v){return Vertex[v];}
+	var infoCheck = function(v){return Vertex[v];};
 	return function(vertex, index, info) {
 		var len, i, j, k, isNormal, isUV, isColor;
 		if(!Array.isArray(vertex) && !(vertex instanceof Float32Array)) throw 'invalid vertex:' + vertex;
@@ -50,7 +50,7 @@ var Geometry = cls('Geometry', null, (function(){
 				if(isColor) tCo.push(vertex[k+info.r], vertex[k+info.g], vertex[k+info.b], vertex[k+info.a]);
 			}
 			this._mPos = new Float32Array(pos);
-		}else len = 3, this._mPos = vertex instanceof Float32Array ? vertex : new Float32Array(vertex));
+		}else len = 3, this._mPos = vertex instanceof Float32Array ? vertex : new Float32Array(vertex);
 		if(!index){
 			if(!isNormal) calcNormal(info ? pos : vertex, index);
 			this._mNormal = new Float32Array(nm);

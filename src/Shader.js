@@ -25,7 +25,7 @@ var Shader = cls('Shader', null, function(v){
 		var i, temp, str, resultObject, code;
 		code = source.code;
 		resultObject = {id:code.id, shaderStr:null, uniforms:[]};
-		str = 'precision ' + (code.precision ? code.precision : mediump float) + ';\n';
+		str = 'precision ' + (code.precision ? code.precision : 'mediump float') + ';\n';
 		temp = code.uniforms, i = temp.length;
 		while(i--){
 			str += 'uniform ' + temp[i] + ';\n',
@@ -35,7 +35,7 @@ var Shader = cls('Shader', null, function(v){
 		while(i--) str += 'varying ' + temp[i] + ';\n';
 		resultObject.shaderStr = str + 'void main(void){\n' + code.main.join('\n') + '}';
 		return resultObject;
-	};
+	}
 });
 (function(){
 	var pos = 'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);';
@@ -62,7 +62,7 @@ var Shader = cls('Shader', null, function(v){
 		'}'
 	].join('\n');
 	Shader.graph = {
-		vertex:.new Shader({
+		vertex: new Shader({
 			id:'graphColorVertexShader',
 			attributes:apos,
 			uniforms:ubasec,
@@ -342,7 +342,7 @@ var Shader = cls('Shader', null, function(v){
 		toString:function(){return 'bitmapBlinn';},
 		vertex:new Shader({
 			id:'bitmapVertexShaderBlinn',
-			attributes:apos('vec2 aUV', 'vec3 aVertexNormal'),
+			attributes: apos.add('vec2 aUV', 'vec3 aVertexNormal'),
 			uniforms:ubase,
 			varyings:['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
 			main:[

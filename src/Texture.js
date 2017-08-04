@@ -1,16 +1,16 @@
 var Texture = cls('Texture', null, (function(){
 	var c = document.createElement('canvas'), ctx = c.getContext('2d');
 	var resizer = function(resizeType, v){
-        var tw = 1, th = 1;
-        while(v.width > tw) tw *= 2;
-        while(v.height > th) th *= 2;
-        if(resizeType == Texture.zoomOut){
-            if(v.width < tw) tw /= 2;
-            if(v.height < th) th /= 2;
-        }
-        canvas.width = tw, canvas.height = th;
-        context.clearRect(0, 0, tw, th);
-        switch(resizeType){
+				var tw = 1, th = 1;
+				while(v.width > tw) tw *= 2;
+				while(v.height > th) th *= 2;
+				if(resizeType === Texture.zoomOut){
+						if(v.width < tw) tw /= 2;
+						if(v.height < th) th /= 2;
+				}
+				canvas.width = tw, canvas.height = th;
+				context.clearRect(0, 0, tw, th);
+				switch(resizeType){
 		case Texture.crop:
 			var ratio = v.height / v.width;
 			if(v.height < th){
@@ -26,10 +26,10 @@ var Texture = cls('Texture', null, (function(){
 			break;
 		default:
 			context.drawImage(v, 0, 0, tw, th);
-        }
-        v.src = canvas.toDataURL();
-        return v;
-    };
+				}
+				v.src = canvas.toDataURL();
+				return v;
+		};
 	return function(v, resizeType){
 		var complete, img, w, h;
 		this.super();
@@ -47,15 +47,16 @@ var Texture = cls('Texture', null, (function(){
 			img.src = context.toDataURL();
 			break;
 		default:
-			if(typeof v != 'string' || v.substring(0, 10) != 'data:image' || v.indexOf('base64') == -1) throw 'invalid img:' + v;
+			if(typeof v !== 'string' || v.substring(0, 10) !== 'data:image' || v.indexOf('base64') === -1) throw 'invalid' +
+			' img:' + v;
 			img.src = v;
 		}
 		if(resizeType){
 			if(!Texture[resizeType]) throw 'invalid resizeType:' + resizeType;
 			img = resizer(img);
 		}
-		this.shared('img', img);		
+		this.shared('img', img);
 	};
-})();, {});
+})(), {});
 'zoomOut,zoomIn,crop,addSpace,diffuse,specular,diffuseWrap,normal,specularNormal'.split(',').forEach(function(v){Texture[v] = v;});
 Object.freeze(Texture);

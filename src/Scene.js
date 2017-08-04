@@ -17,19 +17,19 @@ var Scene = cls('Scene', null, function Scene() {
 		}
 		c = c[m];
 		if(c.items.indexOf(mesh) > -1) throw 'exist child:' + mesh;
-	  	c.items.push(mesh);
+			c.items.push(mesh);
 		c.isUpdateGeo = true;
-    },
+		},
 	removeMesh:function(mesh){
 		var c = this.children[mesh.material], i;
-		if(!c || (i = c.items.indexOf(mesh)) == -1) return;
+		if(!c || (i = c.items.indexOf(mesh)) === -1) return;
 		c.items.splice(i, 1);
 		c.isUpdateGeo = true;
 	},
-    addCamera:function(camera){
+		addCamera:function(camera){
 		var c = this.cameras;
 		if(!(camera instanceof Camera)) throw 'invalid camera:' + camera;
-		if(c.indexOf(camera) == -1) c.push(camera);
+		if(c.indexOf(camera) === -1) c.push(camera);
 	},
 	removeCamera:function(camera){
 		var c = this.cameras, i;
