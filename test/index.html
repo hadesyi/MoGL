@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>bsGL4</title>
+</head>
+<body style="padding:0;margin:0;background:#f00">
+<canvas id="stage" width="500" height="500" style="width:500px;height:500px;background:rgba(0,0,0,0)"></canvas>
+<script src="../src/index.js"></script>
+<script>
+new mgl('stage')
+.buffer('t1', new Float32Array([
+	-.5,.5,0, 0,0,0, -.5,-.5,0,
+	.5,.5,0, 0,0,0, .5,-.5,0
+]))
+.program('base', `
+	attribute vec3 apos;
+	void main(void){
+		gl_Position = vec4(apos, 1.0);
+	}
+`, `
+	void main(void){
+		gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+	}
+`)
+.attr('base', 'apos', 't1')
+.drawArray();
+</script>
+</body>
+</html>
