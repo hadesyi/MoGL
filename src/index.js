@@ -1,8 +1,0 @@
-
-
-	
-	
-	
-	
-	return mgl;
-})(this, document);
