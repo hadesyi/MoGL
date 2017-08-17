@@ -6,7 +6,6 @@
 </head>
 <body style="padding:0;margin:0;background:url('bg.png') repeat">
 <canvas id="stage" width="500" height="500" style="width:500px;height:500px;background:rgba(0,0,0,0)"></canvas>
-<<<<<<< HEAD
 <script src="../build/test.php"></script>
 <script src="old.js"></script>
 <script>
@@ -59,128 +58,6 @@ var normal = function(){
 	};
 };
 normal();
-=======
-<script src="../src/matrix.js"></script>
-<script src="../src/index.js"></script>
-<script>
-var dynamicAttr = function(){
-	var world = new mgl('stage')
-	.program('base', `
-		attribute vec3 apos;
-		attribute vec4 acolor;
-		varying vec4 vcolor;
-		void main(void){
-			vcolor = acolor;
-			gl_Position = vec4(apos, 1.0);
-		}
-		`, `
-		precision mediump float;
-		varying vec4 vcolor;
-		void main(void){
-			gl_FragColor = vcolor;
-		}
-	`)
-	.buffer('t1', true, 'xyzrgba', [
-		-.5,.5,0,1,1,0,1, 0,0,0,1,1,0,1, -.5,-.5,0,1,1,0,1,
-		.5,.5,0,0,1,0,1, 0,0,0,0,1,0,1, .5,-.5,0,0,1,0,1
-	]);
-	(function(){
-		var pos = world.buffer('t1').pos(),
-			origin = pos.map(function(v){return v;}),
-			f = function(v, i){if(i % 3 == 0) pos[i] = origin[i] + tx},
-			a = 0, tx, loop;
-		requestAnimationFrame(loop = function(){
-			tx = mgl.sin(a) / 2;
-			a += 0.01;
-			pos.forEach(f);
-			world.attr('base', 't1', {apos:'pos', acolor:'color'}).clear().drawArray('triangles');
-			requestAnimationFrame(loop);
-		});
-	})();
-};
-var uniform = function(){
-	var world = new mgl('stage')
-	.program('base', `
-		attribute vec3 apos;
-		attribute vec4 acolor;
-		uniform mat4 uproject;
-		uniform mat4 umove;
-		varying vec4 vcolor;
-		void main(void){
-			vcolor = acolor;
-			gl_Position = uproject * umove * vec4(apos, 1.0);
-		}
-		`, `
-		precision mediump float;
-		varying vec4 vcolor;
-		void main(void){
-			gl_FragColor = vcolor;
-		}
-	`)
-	.buffer('t1', false, 'xyzrgba', [
-		-.5,.5,0,1,1,0,1, 0,0,0,1,1,0,1, -.5,-.5,0,1,1,0,1,
-		.5,.5,0,0,1,0,1, 0,0,0,0,1,0,1, .5,-.5,0,0,1,0,1
-	])
-	.attr('base', 't1', {apos:'pos', acolor:'color'})
-	.uniform('base', {uproject:new mgl.Matrix().matPerspective(45, 1, 0.1, 100)});
-	(function(){
-		var u = {umove:new mgl.Matrix().matTranslate(0, 0, -2)}, a = 0, loop;
-		requestAnimationFrame(loop = function(){
-			u.umove.matIdentity().matTranslate(mgl.sin(a += 0.01) / 2, 0, -2);
-			world.uniform('base', u).clear().drawArray('triangles');
-			requestAnimationFrame(loop);
-		});
-	})();
-};
-var index = function(){
-	var world = new mgl('stage')
-	.program('base', `
-		attribute vec3 apos;
-		attribute vec4 acolor;
-		uniform mat4 uproject;
-		uniform mat4 umove;
-		varying vec4 vcolor;
-		void main(void){
-			vcolor = acolor;
-			gl_Position = uproject * umove * vec4(apos, 1.0);
-		}
-		`, `
-		precision mediump float;
-		varying vec4 vcolor;
-		void main(void){
-			gl_FragColor = vcolor;
-		}
-	`)
-	.buffer('color', false, 'rgb', [
-		0,0,1, 1,1,1, 0,0,1, 0,0,1, 0,0,1, 1,1,1,
-		0,1,1, 1,1,1, 0,1,1, 0,1,1, 0,1,1, 1,1,1 
-	])
-	.buffer('pos', false, 'xyz', [
-		0,0,0, 1,0,0, 2,0,0, .5,1,0, 1.5,1,0, 1,2,0,
-		0,0,-2, 1,0,-2, 2,0,-2, .5,1,-2, 1.5,1,-2, 1,2,-2
-	])
-	.buffer('index', false, 'index', [
-		0,1,3, 1,3,4, 1,2,4, 3,4,5, 
-		6,7,9, 7,9,10, 7,8,10, 9,10,11,
-		0,3,6, 3,6,9, 3,5,9, 5,9,11,
-		2,4,8, 4,8,10, 4,5,10, 5,10,11,
-		0,6,8, 8,2,0
-	])
-	.attr('base', 'color', {acolor:'color'})
-	.attr('base', 'pos', {apos:'pos'})
-	.index('base', 'index')
-	.uniform('base', {uproject:new mgl.Matrix().matPerspective(45, 1, 0.1, 100)});
-	(function(){
-		var u = {umove:new mgl.Matrix().matTranslate(0, 0, -2)}, a = 0, loop;
-		requestAnimationFrame(loop = function(){
-			u.umove.matIdentity().matTranslate(-1 + mgl.sin(a += 0.01) / 2, -1, -8).matRotateY(a).matRotateZ(a);
-			world.uniform('base', u).clear().drawElement('triangles');
-			requestAnimationFrame(loop);
-		});
-	})();
-};
-index();
->>>>>>> cf0fb6674d70381b5fa64c0de028f533d3b97583
 </script>
 </body>
 </html>
