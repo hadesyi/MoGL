@@ -4,27 +4,60 @@
 <meta charset="utf-8">
 <title>bsGL4</title>
 </head>
-<body style="padding:0;margin:0;background:#f00">
+<body style="padding:0;margin:0;background:url('bg.png') repeat">
 <canvas id="stage" width="500" height="500" style="width:500px;height:500px;background:rgba(0,0,0,0)"></canvas>
-<script src="../src/index.js"></script>
+<script src="../build/test.php"></script>
+<script src="old.js"></script>
 <script>
-new mgl('stage')
-.buffer('t1', new Float32Array([
-	-.5,.5,0, 0,0,0, -.5,-.5,0,
-	.5,.5,0, 0,0,0, .5,-.5,0
-]))
-.program('base', `
-	attribute vec3 apos;
-	void main(void){
-		gl_Position = vec4(apos, 1.0);
-	}
-`, `
-	void main(void){
-		gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-	}
-`)
-.attr('base', 'apos', 't1')
-.drawArray();
+var normal = function(){
+	var tex1 = document.createElement('img'), tex2 = document.createElement('img'), i = 0;
+	tex2.src = 'bg.png';
+	tex1.src = 'b2.png';
+	tex1.onload = tex2.onload = function(){if(++i == 2) start();};
+	var start = function(){
+		var world = new mgl('stage');
+		world
+		.program('base', `
+			attribute vec3 apos;
+			attribute vec3 anormal;
+			attribute vec2 auv;
+
+			uniform mat4 uproject;
+			uniform mat4 umove;
+
+			varying vec2 vuv;
+			void main(void){
+				vec3 a = anormal;
+				gl_Position = uproject * umove * vec4(apos, 1.0);
+				vuv = auv;
+			}
+			`, `
+			precision mediump float;
+			uniform sampler2D utex1;
+			uniform sampler2D utex2;
+			varying vec2 vuv;
+			void main(void){
+				vec4 a = texture2D(utex1, vuv);
+				vec4 b = texture2D(utex2, vuv);
+				gl_FragColor = a.a > b.a ? a : b;
+			}
+		`)
+		.buffer('cube', mgl.cube(1,1,1))
+		.attr('base', 'cube', {apos:'pos', auv:'uv', anormal:'normal'})
+		.index('base', 'cube')
+		.uniform('base', {uproject:new mgl.Matrix().matPerspective(45, 1, 0.1, 100), udlight:new Float32Array([0, -1, -1])})
+		.texture('base', {utex1:tex1, utex2:tex2});
+		(function(){
+			var u = {umove:new mgl.Matrix().matTranslate(0, 0, -2)}, a = 0, loop;
+			requestAnimationFrame(loop = function(){
+				u.umove.matIdentity().matTranslate( mgl.sin(a += 0.01) / 2, 0, -3).matRotateY(a).matRotateZ(a);
+				world.uniform('base', u).clear().drawElement('triangles');
+				requestAnimationFrame(loop);
+			});
+		})();
+	};
+};
+normal();
 </script>
 </body>
 </html>

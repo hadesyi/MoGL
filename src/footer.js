@@ -1,0 +1,2 @@
+return mgl;
+})(this, document);
