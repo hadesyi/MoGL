@@ -25,7 +25,7 @@ var Buffer = (function(){
 		}
 		if(pos) this._pos = new Float32Array(pos);
 		if(normal) this._normal = new Float32Array(normal);
-		else if(makeNormal && pos && this._index) this._normal = normal = mgl.normal(pos, this._index);
+		else if(makeNormal && pos && this._index) this._normal = new Float32Array(normal = mgl.normal(pos, this._index));
 		if(uv) this._uv = new Float32Array(uv);
 		if(color) this._color = new Float32Array(color);
 		j = (i = uv) ? 2 : (i = pos || normal) ? 3 : (i = color) ? 4 : 0;
