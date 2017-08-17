@@ -6,7 +6,8 @@
 </head>
 <body style="padding:0;margin:0;background:url('bg.png') repeat">
 <canvas id="stage" width="500" height="500" style="width:500px;height:500px;background:rgba(0,0,0,0)"></canvas>
-<script src="../build/test.php"></script>
+<!--<script src="../build/test.php"></script>-->
+<script src="../src/mglLoader.js"></script>
 <script src="old.js"></script>
 <script>
 var normal = function(){
@@ -57,7 +58,8 @@ var normal = function(){
 		})();
 	};
 };
-normal();
+mglLoader(normal);
+//normal();
 </script>
 </body>
 </html>
