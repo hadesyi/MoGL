@@ -88,9 +88,9 @@ fn(mgl,
 	this._programs[k].uniform(this._gl, uniform);
 	return this;
 },
-'texture', function(k, tex){
+'texture', function(k, isFlipY, isMipamp, tex){
 	if(!this._programs[k]) throw 'no program';
-	this._programs[k].texture(this._gl, tex);
+	this._programs[k].texture(this._gl, isFlipY, isMipamp, tex);
 	return this;
 },
 'attr', function(k, buf, attr, stride, offset){
@@ -125,7 +125,7 @@ mgl._ctxSetting = {
 	stencil: false,
 	antialias: true,
 	premultipliedAlpha: true,
-	preserveDrawingBuffer: false
+	preserveDrawingBuffer: true
 };
 mgl.sin = SIN, mgl.cos = COS, mgl.tan = TAN;
 mgl.normal = (function(){

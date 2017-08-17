@@ -22,7 +22,6 @@ fn(Program,
 	if(typeof attr == 'string') a = {}, a[attr] = 'pos', attr = a;
 	for(k in attr) if(attr.hasOwnProperty(k)){
 		a = gl.getAttribLocation(this._program, k);
-		console.log(k, a)
 		gl.enableVertexAttribArray(a);
 		buffer.bind(gl, stride || 0, offset || 0, a, attr[k]);
 	}
@@ -64,38 +63,37 @@ fn(Program,
 'texture', (function(){
 	var c = doc.createElement('canvas'), ctx = c.getContext('2d');
 	var img = function(v){
-		var w, h, vw, vh;
+		var w, h, vw, vh, isCanvas;
 		switch(true){
 		case v instanceof HTMLImageElement:
 			if(!v.complete) throw 'incompleted img';
 			break;
 		case v instanceof ImageData:
-			c.width = w = v.width;
-			c.height = h = v.height;
-			ctx.clearRect(0, 0, w, h);
-			ctx.putImageData(v, 0, 0);
-			v = doc.createElement('img');
-			v.src = c.toDataURL();
-			break;
+			w = h = 1, vw = v.width, vh = v.height;
+			if((vw & (vw - 1)) || (vh & (vh - 1))){
+				while(vw > w) w *= 2;
+				while(vh > h) h *= 2;
+			}else w = vw, h = vh;
+			ctx.clearRect(0, 0, c.width = w, c.height = h);
+			ctx.putImageData(v, 0, 0, 0, 0, w, h);
+			return c;
 		case typeof v == 'string' && v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1:
-			w = doc.createElement('img');
-			w.src = v;
-			v = w;
+			isCanvas = true;
+			w = doc.createElement('img'), w.src = v, v = w;
 			break;
 		default: throw 'invalid image';
 		}
 		w = h = 1, vw = v.width, vh = v.height;
-		if((vw & (vw - 1)) || (vh & (vh - 1))){
+		if(isCanvas || (vw & (vw - 1)) || (vh & (vh - 1))){
 			while(vw > w) w *= 2;
 			while(vh > h) h *= 2;
 			ctx.clearRect(0, 0, c.width = w, c.height = h);
 			ctx.drawImage(v, 0, 0, w, h);
-			v.src = c.toDataURL();
-			v.width = w, v.height = h;
+			return c;
 		}
 		return v;
 	};
-	return function(gl, tex){
+	return function(gl, isFlipY, isMipamp, tex){
 		var v, t, k, i = 0;
 		if(!this._program) throw 'before use Program';
 		if(!tex) throw 'invalid texture';
@@ -105,9 +103,10 @@ fn(Program,
 			gl.activeTexture(gl.TEXTURE0 + i);
 			gl.bindTexture(gl.TEXTURE_2D, v);
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img(tex[k]));
-			//gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+			if(isFlipY) gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+			if(isMipamp) gl.generateMipmap(gl.TEXTURE_2D);
 			if(!gl.isTexture(v)) throw 'invalid texture';
 			gl.uniform1i(gl.getUniformLocation(this._program, k), i);
 			i++;
