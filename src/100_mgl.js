@@ -1,11 +1,16 @@
 var mgl = function(c, opt){
-	var gl;
-	opt = opt || mgl._ctxSetting;
+	var gl, k, o;
+	if(opt){
+		o = {};
+		for(k in mgl._ctxSetting) if(mgl._ctxSetting.hasOwnProperty(k)){
+			o[k] = opt.hasOwnProperty(k) ? opt[k] : mgl._ctxSetting[k];
+		}
+	}else o = mgl._ctxSetting;
 	this._c = typeof c == 'string' ? (c = doc.getElementById(c)) : c;
 	this._w = c.width, this._h = c.height;
-	if(mgl._ctx) gl = c.getContext(mgl._ctx, opt);
+	if(mgl._ctx) gl = c.getContext(mgl._ctx, o);
 	else 'experimental-webgl,webgl,webkit-3d,moz-webgl,3d'.split(',').some(function(v){
-		return gl = c.getContext(mgl._ctx = v, opt);
+		return gl = c.getContext(mgl._ctx = v, o);
 	});
 	if(!gl) throw 'webgl disable';
 	this._gl = gl;
@@ -88,9 +93,9 @@ fn(mgl,
 	this._programs[k].uniform(this._gl, uniform);
 	return this;
 },
-'texture', function(k, isFlipY, isMipamp, tex){
+'texture', function(k, isFlipY, isMipmap, tex){
 	if(!this._programs[k]) throw 'no program';
-	this._programs[k].texture(this._gl, isFlipY, isMipamp, tex);
+	this._programs[k].texture(this._gl, isFlipY, isMipmap, tex);
 	return this;
 },
 'attr', function(k, buf, attr, stride, offset){

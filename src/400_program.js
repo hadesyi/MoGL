@@ -65,6 +65,7 @@ fn(Program,
 	var img = function(v){
 		var w, h, vw, vh, isCanvas;
 		switch(true){
+		case v instanceof HTMLCanvasElement:case v instanceof HTMLVideoElement: return v;
 		case v instanceof HTMLImageElement:
 			if(!v.complete) throw 'incompleted img';
 			break;
