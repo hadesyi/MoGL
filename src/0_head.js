@@ -3,8 +3,40 @@ var fn = function(cls){
 	var opt = {}, a = arguments, i = 1, j = a.length, v;
 	while(i < j) opt[a[i++]] = typeof (v = a[i++]) == 'function' ? {value:v} : v;
 	Object.freeze(Object.defineProperties(cls.prototype, opt));
+	return cls;
 };
-var map = function(){return Object.create(null);};
+var is = function(){
+	var a = arguments, i = 0, j = a.length, v, c, t;
+	while(i < j){
+		v = a[i++], c = a[i++], t = a[i++];
+		if(!(v instanceof c)) throw t;
+	}
+};
+var map = function(proto){return Object.create(proto || null);};
+var Dispatcher = fn(function(){},
+'listen', function(){throw 'override';},
+'addListener', function(type, o){
+	var l;
+	if(typeof o != 'function' && !(o instanceof Dispatcher)) throw 'invalid listener'
+	l = this._obsv || (this._obsv = map());
+	l = l[type] || (l[type] = []);
+	if(l.indexOf(o) == -1) l.push(o);
+},
+'removeListener', function(type, o){
+	var l = this._obsv, i;
+	if(!l || !(l = l[type])) return;
+	if(o)l.splice(l.indexOf(o), 1);
+	else l.length = 0;
+},
+'dispatch', (function(){
+	var f = function(v){typeof v == 'function' ? v(f.data) : v.listen(f.data);};
+	return function(type, data){
+		var l = this._obsv;
+		if(!l || !(l = l[type])) return;
+		(f.data = data || {}).type = type;
+		l.forEach(f);
+	};
+})());
 var color = function(v){
 	var ret = [];
 	if(typeof v == 'string'){

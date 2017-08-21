@@ -133,6 +133,12 @@ mgl._ctxSetting = {
 	preserveDrawingBuffer: true
 };
 mgl.sin = SIN, mgl.cos = COS, mgl.tan = TAN;
+mgl.rnd = (function(){
+	var r = [], c = 0, l = 0;
+	return function(){
+		return l < 2000 ? r[l++] = Math.random() : r[c == l ? c = 0 : c++];
+	};
+})();
 mgl.normal = (function(){
 	var v1, v2;
 	v1 = {x:0, y:0, z:0}, v2 = {x:0, y:0, z:0};

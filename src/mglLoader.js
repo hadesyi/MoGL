@@ -8,6 +8,12 @@ var mglLoader = function(f){
 		'300_shader',
 		'400_program',
 		'500_buffer',
+		'9000_Geo',
+		'9100_Tex',
+		'9200_Mesh',
+		'9300_Camera',
+		'9800_Scene',
+		'9900_World',
 		'footer'
 	];
 	files.forEach(function(v, idx){
